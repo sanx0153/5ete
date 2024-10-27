@@ -5,19 +5,60 @@ class output
     __New()
     {
         ;global TILE_SIZE := 60
-        this.Gui := Gui("AlwaysOnTop -Border -Caption -SysMenu")
+        this.Gui := Gui("-Border -Caption -SysMenu")
         this.Gui.Show("w600 h600 Center")
         this.bg := this.Gui.AddPicture("w600 h600 Disabled","hbitmap:*" images.app_bg)
-        isIconChanged := TraySetIcon("hbitmap:*" images.card)
+        isIconChanged := TraySetIcon("hbitmap:*" images.face)
+        this.buttonNew := this.Gui.AddButton("h60 w180 x360 y120 Center","NEW GAME")
+        this.buttonLeave := this.Gui.AddButton("h60 w180 x360 y240 Center","EXIT")
+        this.inputField := this.Gui.AddEdit("Limit5 Uppercase x60 y420 w480 h120 Center") ; CHECKPOINT > continue from here, stopped because of my glasses
+        this.inputField.SetFont("bold s60 w1000")
+        this.blockzero := output.block(this.makeControl("picture","w60 h60"),this.makeControl("text","BackgroundTrans w60 h60"))
     }
-    
-}
-/*
-class block extends Gui.Picture
-{
-    __New()
+    createEvents()
     {
-        super.__New("w60 h60 Disabled","hbitmap:*" images.block)
+        ;REMEMBER HOW THE HELL I MADE THIS WORK ON THE OTHER, THIS IS SO ANNOYING.
+        ;UPDATE: DID IT AND IT SEEMS SO WRONG ACCORDING TO DOCUMENTATION...
+        ;JUST A MEMENTO: THE TARGET MUST BE ABLE TO RECEIVE PARAMS IN ORDER FOR THIS SOLUTION TO WORK, AND I REALLY MEAN JUST ACCEPT (solved by making logic.startNewGame() become logic.startNewGame(*) AND SO ON, TESTED THE OTHER WAY AROUND AND IT RETURNS TOO MANY ARGUMENTS ERROR.)
+        ;TRY TO FIGURE OUT WHY, IF IT'S ME MISUNDERSTANDING STUFF OR JUST A CATCH FROM AHK2
+        ;nested ObjBindMethods don't work either, Copilot agrees that it should be the way according to doc
+        ;figuring if this is my error or error at either doc or even the language might be useful either case.
+        this.buttonNew.OnEvent("Click",logic.startNewGame.Bind())
+        this.buttonLeave.OnEvent("Click",logic.leaveGame.Bind())
+    }
+
+    makeControl(type,opt)
+    {
+        control := this.Gui.Add(type,opt)
+        return control
+    }
+    start()
+    {
+        this.createEvents()
+    }
+    class block
+    {
+        __New(pictureControl,textControl)
+        {
+            this.control := {}
+            this.control.picture := pictureControl
+            this.control.text := textControl
+            this.control.picture.Value := "HBITMAP:*" images.block
+            this.control.text.Value := "?"
+            this.setPosition(0,0)
+        }
+        setPosition(x,y)
+        {
+            this.control.picture.Move(x,y)
+            this.control.text.Move(x,y)
+            this.x := x
+            this.y := y
+            this.redraw()
+        }
+        redraw()
+        {
+            this.control.picture.redraw()
+            this.control.text.redraw()
+        }
     }
 }
-*/

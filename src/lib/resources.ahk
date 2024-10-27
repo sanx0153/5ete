@@ -2,7 +2,8 @@
 
 class images
 {
-    static app_bg := LoadPicture("img\bg_halloween.jpg")
+    static app_bg := LoadPicture("img\bg_halloween.jpg","w600 h600")
     static card := LoadPicture("img\king.png")
-    static block := LoadPicture("img\block_001.png")
+    static block := LoadPicture("img\blocks_001.png","w60 h60")
+    static face := LoadPicture("img\blockface.png","w30 h30")
 }

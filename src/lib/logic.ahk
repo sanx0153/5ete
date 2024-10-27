@@ -2,5 +2,12 @@
 
 class logic
 {
-    
+    static startNewGame(*)
+    {
+        MsgBox(A_ThisFunc)
+    }
+    static leaveGame(*)
+    {
+        ExitApp()
+    }
 }
