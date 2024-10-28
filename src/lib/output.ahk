@@ -56,7 +56,7 @@ class output
         setPosition(x,y)
         {
             this.control.picture.Move(x,y)
-            this.control.text.Move(x,y)
+            this.control.text.Move(x,y,60,60)
             this.x := x
             this.y := y
             this.redraw()
