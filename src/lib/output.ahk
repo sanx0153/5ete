@@ -7,13 +7,14 @@ class output
         ;global TILE_SIZE := 60
         this.Gui := Gui("-Border -Caption -SysMenu")
         this.Gui.Show("w600 h600 Center")
-        this.bg := this.Gui.AddPicture("w600 h600 Disabled","hbitmap:*" images.app_bg)
+        this.Gui.SetFont("s22 w1000")
+        this.bg := this.Gui.AddPicture("x0 y0 w600 h600 Disabled","hbitmap:*" images.app_bg)
         isIconChanged := TraySetIcon("hbitmap:*" images.face)
         this.buttonNew := this.Gui.AddButton("h60 w180 x360 y120 Center","NEW GAME")
         this.buttonLeave := this.Gui.AddButton("h60 w180 x360 y240 Center","EXIT")
         this.inputField := this.Gui.AddEdit("Limit5 Uppercase x60 y420 w480 h120 Center") ; CHECKPOINT > continue from here, stopped because of my glasses
         this.inputField.SetFont("bold s60 w1000")
-        this.blockzero := output.block(this.makeControl("picture","w60 h60"),this.makeControl("text","BackgroundTrans w60 h60"))
+        this.blockzero := output.block(this.makeControl("picture"),this.makeControl("text"))
     }
     createEvents()
     {
@@ -27,9 +28,9 @@ class output
         this.buttonLeave.OnEvent("Click",logic.leaveGame.Bind())
     }
 
-    makeControl(type,opt)
+    makeControl(type)
     {
-        control := this.Gui.Add(type,opt)
+        control := this.Gui.Add(type)
         return control
     }
     start()
@@ -43,9 +44,14 @@ class output
             this.control := {}
             this.control.picture := pictureControl
             this.control.text := textControl
-            this.control.picture.Value := "HBITMAP:*" images.block
+            this.control.picture.opt("w60 h60")
+            this.control.text.opt("Center BackgroundTrans w60 h60")
+            ;Sets placeholders
+            this.control.picture.Value := "HBITMAP:*" images.blockRed
             this.control.text.Value := "?"
-            this.setPosition(0,0)
+            this.control.text.SetFont("s40")
+            this.setPosition(60,60)
+            this.setSkin("orange")
         }
         setPosition(x,y)
         {
@@ -53,6 +59,19 @@ class output
             this.control.text.Move(x,y)
             this.x := x
             this.y := y
+            this.redraw()
+        }
+        setSkin(color)
+        {
+            this.control.text.SetFont("c808080")
+            switch color
+            {
+            case "orange":
+                this.control.picture.Value := "HBITMAP:*" images.blockOrange
+                this.control.text.SetFont("cBlack")
+            default:
+                this.control.picture.Value := "HBITMAP:*" images.blockPink
+            }
             this.redraw()
         }
         redraw()
