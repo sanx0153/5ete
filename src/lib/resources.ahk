@@ -7,5 +7,24 @@ class images
     static blockPink := LoadPicture("img\blocks_001.png","w60 h60")
     static blockRed := LoadPicture("img\blocks_002.png","w60 h60")
     static blockOrange := LoadPicture("img\blocks_003.png","w60 h60")
-    static face := LoadPicture("img\blockface.png","w30 h30")
+    static face := LoadPicture("img\block_face.png","w30 h30")
+    static block(color)
+    {
+        table := images.blockTable
+        for colors,code in table.OwnProps()
+            if StrLower(color) == StrLower(colors)
+                return LoadPicture("img\blocks_" code ".png","w60 h60")
+        return false
+    }
+    static blockTable :=
+    {
+        face:"face",
+        pink:"001",
+        red:"002",
+        orange:"003",
+        yellow:"004",
+        green:"005",
+        blue:"006",
+        purple:"007",
+    }
 }

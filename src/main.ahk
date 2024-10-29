@@ -19,7 +19,7 @@ class main
             this.logic    := logic()
             this.output   := output()
             }
-            A_ScriptName := "Sete5"
+            A_ScriptName := "5ete"
             SetTimer(ObjBindMethod(this,"start"),-100)
         }
         else return main.instance

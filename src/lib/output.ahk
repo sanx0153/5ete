@@ -4,17 +4,22 @@ class output
 {
     __New()
     {
+        global outputinstance := this
         ;global TILE_SIZE := 60
         this.Gui := Gui("-Border -Caption -SysMenu")
         this.Gui.Show("w600 h600 Center")
         this.Gui.SetFont("s22 w1000")
         this.bg := this.Gui.AddPicture("x0 y0 w600 h600 Disabled","hbitmap:*" images.app_bg)
-        isIconChanged := TraySetIcon("hbitmap:*" images.face)
+        isIconChanged := TraySetIcon("hbitmap:*" images.block("face"))
         this.buttonNew := this.Gui.AddButton("h60 w180 x360 y120 Center","NEW GAME")
         this.buttonLeave := this.Gui.AddButton("h60 w180 x360 y240 Center","EXIT")
-        this.inputField := this.Gui.AddEdit("Limit5 Uppercase x60 y420 w480 h120 Center") ; CHECKPOINT > continue from here, stopped because of my glasses
-        this.inputField.SetFont("bold s60 w1000")
-        this.blockzero := output.block(this.makeControl("picture"),this.makeControl("text"))
+        this.inputField := this.Gui.AddEdit("Limit5 Uppercase x60 y480 w480 h60 Center -VScroll") ; CHECKPOINT > continue from here, stopped because of my glasses
+        this.inputField.SetFont("s36 w1000")
+        this.panel := output.panel()
+    }
+    createBlock(index)
+    {
+        return output.block(this.makeControl("picture"),this.makeControl("text"),index)
     }
     createEvents()
     {
@@ -39,23 +44,55 @@ class output
     }
     class block
     {
-        __New(pictureControl,textControl)
+        __New(pictureControl,textControl,index)
         {
+            this.index := index
+            this.column := To.Column(index)
+            this.line := To.Line(index)
             this.control := {}
             this.control.picture := pictureControl
             this.control.text := textControl
             this.control.picture.opt("w60 h60")
             this.control.text.opt("Center BackgroundTrans w60 h60")
             ;Sets placeholders
-            this.control.picture.Value := "HBITMAP:*" images.blockRed
+            this.control.picture.Value := "HBITMAP:*" images.block("red")
             this.control.text.Value := "?"
             this.control.text.SetFont("s40")
             this.setPosition(60,60)
+            this.getIntoPlace(index)
+            this.setSkin("orange")
+            this.hide()
+            ;SetTimer(ObjBindMethod(this,"colorTest"),Random(1,10) * (-100))
+        }
+        colorTest()
+        {
+            for color, code in images.blockTable.OwnProps()
+            {
+                this.setSkin(color)
+                Sleep((Random(2,6) * (100)))
+            }
+            SetTimer(ObjBindMethod(this,"colorTest"),-1)
+        }
+        getIntoPlace(index)
+        {
+            this.setPosition((To.Column(index) * 60),(to.line(index) * 60))
+        }
+        hide()
+        {
+            this.hideText()
+            this.hiddenBlock()
+        }
+        hideText()
+        {
+            this.control.text.Value := "?"
+        }
+        hiddenBlock()
+        {
             this.setSkin("orange")
         }
         setPosition(x,y)
         {
-            this.control.picture.Move(x,y)
+            this.control.picture.Move(x,y,60,60)
             this.control.text.Move(x,y,60,60)
             this.x := x
             this.y := y
@@ -63,21 +100,28 @@ class output
         }
         setSkin(color)
         {
-            this.control.text.SetFont("c808080")
-            switch color
-            {
-            case "orange":
-                this.control.picture.Value := "HBITMAP:*" images.blockOrange
+            if StrLower(color) == "orange"||"yellow"
                 this.control.text.SetFont("cBlack")
-            default:
-                this.control.picture.Value := "HBITMAP:*" images.blockPink
-            }
+            else
+                this.control.text.SetFont("c808080")
+            this.control.picture.Value := "HBITMAP:*" images.block(color)
             this.redraw()
         }
         redraw()
         {
             this.control.picture.redraw()
             this.control.text.redraw()
+        }
+    }
+    class panel
+    {
+        __New()
+        {
+            this.blocks := []
+            loop 35
+            {
+                this.blocks.Push(outputinstance.createBlock(A_Index))
+            }
         }
     }
 }
