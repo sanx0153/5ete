@@ -13,7 +13,7 @@ class output
         isIconChanged := TraySetIcon("hbitmap:*" images.block("face"))
         this.buttonNew := this.Gui.AddButton("h60 w180 x360 y120 Center","NEW GAME")
         this.buttonLeave := this.Gui.AddButton("h60 w180 x360 y240 Center","EXIT")
-        this.inputField := this.Gui.AddEdit("Limit5 Uppercase x60 y480 w480 h60 Center -VScroll") ; CHECKPOINT > continue from here, stopped because of my glasses
+        this.inputField := this.Gui.AddEdit("vInputField Limit5 Uppercase x60 y480 w480 h60 Center -VScroll") ; CHECKPOINT > continue from here, stopped because of my glasses
         this.inputField.SetFont("s36 w1000")
         this.panel := output.panel()
     }
@@ -46,6 +46,7 @@ class output
     {
         __New(pictureControl,textControl,index)
         {
+            this.shineStatus := false
             this.index := index
             this.column := To.Column(index)
             this.line := To.Line(index)
@@ -84,11 +85,24 @@ class output
         }
         hideText()
         {
-            this.control.text.Value := "?"
+            this.setText("?")
         }
         hiddenBlock()
         {
             this.setSkin("orange")
+            this.isShining := true
+            this.shine()
+        }
+        isShining
+        {
+            set
+            {
+                this.shineStatus := value
+            }
+            get
+            {
+                return this.shineStatus
+            }
         }
         setPosition(x,y)
         {
@@ -106,6 +120,22 @@ class output
                 this.control.text.SetFont("c808080")
             this.control.picture.Value := "HBITMAP:*" images.block(color)
             this.redraw()
+        }
+        setText(text)
+        {
+            if StrLen(text) > 1
+                return MsgBox(text "is too long, should be a single chr")
+            this.control.text.Value := StrUpper(text)
+        }
+        shine()
+        {
+            if this.isShining == true
+            {
+                this.isShining := false
+                baseTime := (Random(2,3) * Random(5,10) * 100)
+                SetTimer(ObjBindMethod(this,"setSkin","blue"),-(baseTime))
+                SetTimer(ObjBindMethod(this,"setSkin","orange"),-(baseTime + 100))
+            }
         }
         redraw()
         {
