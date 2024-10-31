@@ -15,7 +15,7 @@ class input
     {
         wordIsValid := logic.validateWord(word)
         wordIsNotRepeated := app.logic.checkPlayHistory(word)
-        if wordIsNotRepeated || wordIsNotRepeated == false
+        if wordIsValid || wordIsNotRepeated == false
             return MsgBox(A_ThisFunc " error.")
         return true
     }

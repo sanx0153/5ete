@@ -13,7 +13,7 @@ class logic
     }
     static validateWord(word)
     {
-        for words in logic.validWords
+        for words in logic.validWords.OwnProps()
             if StrCompare(word,words,0) == true
                 return true
         return false
@@ -53,7 +53,31 @@ class logic
     {
         __New()
         {
-            P
+            if FileExist("data/grimoire.csv")
+                return FileRead("data/grimoire.csv","CP1252")
+            lastWord := ""
+            loop read "data/DELAS.csv", "data/grimoire.csv"
+                {
+                lineN := A_Index
+                if lineN != 1
+                {
+                    wholeLine := A_LoopReadLine
+                    loop parse A_LoopReadLine, "CSV"
+                    {
+                        columnN := A_Index
+                        currentWord := A_LoopField
+                        currentWordLenght := StrLen(currentWord) == 5 ? true : false
+                        differentWords := StrCompare(lastWord,currentWord,"Logical") ? true : false
+                        if columnN == 1 && currentWordLenght == true && differentWords == true
+                        {
+                            ;MsgBox(currentWord,,"t1")
+                            FileAppend(wholeLine "`n")
+                            lastWord := currentWord
+                        }
+                    }
+                }
+            }
+            return FileRead("data/grimoire.csv","CP1252")
         }
     }
 }

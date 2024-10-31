@@ -20,6 +20,7 @@ class main
             this.output   := output()
             }
             A_ScriptName := "5ete"
+            A_FileEncoding := "CP1252"
             SetTimer(ObjBindMethod(this,"start"),-100)
         }
         else return main.instance
