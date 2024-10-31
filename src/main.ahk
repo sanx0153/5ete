@@ -14,13 +14,13 @@ class main
         if !main.instance
         {
             main.instance := this
+            A_ScriptName := "5ete"
+            A_FileEncoding := "CP1252"
             {
             this.input    := input()
             this.logic    := logic()
             this.output   := output()
             }
-            A_ScriptName := "5ete"
-            A_FileEncoding := "CP1252"
             SetTimer(ObjBindMethod(this,"start"),-100)
         }
         else return main.instance

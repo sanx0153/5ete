@@ -14,8 +14,9 @@ class input
     try(word)
     {
         wordIsValid := logic.validateWord(word)
-        wordIsNotRepeated := app.logic.checkPlayHistory(word)
-        if wordIsValid || wordIsNotRepeated == false
+        wordIsRepeated := app.logic.checkPlayHistory(word)
+        actuallyPlay := app.logic.actuallyPlay(word)
+        if wordIsValid || !wordIsRepeated || actuallyPlay == false
             return MsgBox(A_ThisFunc " error.")
         return true
     }
