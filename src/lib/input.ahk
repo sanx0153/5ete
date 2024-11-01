@@ -4,20 +4,33 @@ class input
 {
     collectInput()
     {
-        if (app.logic.gameIsRunning == true) && (StrLen(app.output.inputField.Value) == 5)
+        wordTried := ""
+        if (StrLen(app.output.inputField.Value) == 5)
         {
-            this.try(app.output.inputField.Value)
+            wordTried := app.output.inputField.Value
             app.output.inputField.Value := ""
         }
-
+        if (app.logic.gameIsRunning == true)
+        {
+            if (StrLen(wordTried) == 5)
+            {
+                sendTry := this.try(wordTried)
+                return true
+            }
+        }
+        return false
     }
     try(word)
     {
         wordIsValid := logic.validateWord(word)
-        wordIsRepeated := app.logic.checkPlayHistory(word)
+        wordIsNew := app.logic.checkPlayHistory(word)
         actuallyPlay := app.logic.actuallyPlay(word)
-        if wordIsValid || !wordIsRepeated || actuallyPlay == false
-            return MsgBox(A_ThisFunc " error.")
+        if (wordIsValid & wordIsNew & actuallyPlay == false)
+        {
+            MsgBox(A_ThisFunc . " error " . wordIsValid . wordIsNew . actuallyPlay)
+            return false
+        }
+        MsgBox(A_ThisFunc . " succeded " . wordIsValid . wordIsNew . actuallyPlay)
         return true
     }
     start()

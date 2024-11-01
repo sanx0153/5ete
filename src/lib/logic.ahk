@@ -2,7 +2,7 @@
 
 class logic
 {
-    static validWords := logic.wordList()
+    static validWords := this.wordList()
     static startNewGame(*)
     {
         app.logic.startNewGame()
@@ -13,20 +13,24 @@ class logic
     }
     static validateWord(word) ;continue daqui!!!
     {
-        for ,words in logic.validWords.OwnProps()
-            if StrCompare(word,words,"Logical") == true
+        for i,w in this.validWords.OwnProps()
+        {
+            loop w.Length 
             {
-                MsgBox("Palavra Válida.")
-                return true
+                if StrUpper(word) == StrUpper(w[A_Index])
+                {
+                    return true
+                }
             }
-        return false
+            return false
+        }
     }
 
     gameIsRunning
     {
         get
         {
-            if this.round == 0
+            if this.round <= 0 || this.round >= 8
                 return false
             return true
         }
@@ -49,20 +53,21 @@ class logic
     actuallyPlay(word)
     {
         this.history.%this.round% := logic.word(word)
+        this.round += 1
         return true
     }
     checkPlayHistory(word)
     {
-        for , words in this.history.OwnProps()
+        for order,words in this.history.OwnProps()
         {
             if !words
-                return false
-            if StrCompare(StrUpper(word),StrUpper(words.value),"Logical") == true
-            {
                 return true
+            if StrUpper(word) == StrUpper(words.value)
+            {
+                return false
             }
         }
-        return false
+        return true
     }
     startNewGame()
     {
@@ -95,31 +100,48 @@ class logic
     {
         __New()
         {
-            if FileExist("data/grimoire.csv")
-                return FileRead("data/grimoire.csv","CP1252")
-            lastWord := ""
-            loop read "data/DELAS.csv", "data/grimoire.csv"
+            answer := []
+            if !FileExist("data/grimoire.csv")
+            {
+                lastWord := ""
+                loop read "data/DELAS.csv", "data/grimoire.csv"
                 {
-                lineN := A_Index
-                if lineN != 1
-                {
-                    wholeLine := A_LoopReadLine
-                    loop parse A_LoopReadLine, "CSV"
+                    lineN := A_Index
+                    if lineN != 1
                     {
-                        columnN := A_Index
-                        currentWord := A_LoopField
-                        currentWordLenght := StrLen(currentWord) == 5 ? true : false
-                        differentWords := !(StrCompare(lastWord,currentWord,"Logical")) ? true : false
-                        if columnN == 1 && currentWordLenght == true && differentWords == true
+                        wholeLine := A_LoopReadLine
+                        loop parse A_LoopReadLine, "CSV"
                         {
-                            ;MsgBox(currentWord,,"t1")
-                            FileAppend(currentWord "`n")
-                            lastWord := currentWord
+                            columnN := A_Index
+                            currentWord := A_LoopField
+                            currentWordLenght := StrLen(currentWord) == 5 ? true : false
+                            differentWords := !(StrCompare(lastWord,currentWord,"Logical")) ? true : false
+                            if columnN == 1 && currentWordLenght == true && differentWords == true
+                            {
+                                ;MsgBox(currentWord,,"t1")
+                                FileAppend(currentWord "`n")
+                                lastWord := currentWord
+                            }
                         }
                     }
                 }
             }
-            return FileRead("data/grimoire.csv","CP1252")
+            if !(FileExist("data/wordlist.txt"))
+            {
+                loop read "data/grimoire.csv", "data/wordlist.txt"
+                {
+                    FileAppend(A_LoopReadLine "`n")
+                }
+            }
+            loop read "data/wordlist.txt"
+            {
+                answer.Push(A_LoopReadLine)
+            }
+            this.list := answer
+        }
+        __call()
+        {
+            return this.list
         }
     }
 }

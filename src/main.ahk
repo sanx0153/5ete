@@ -11,7 +11,7 @@ class main
     __New()
     {
         ;Makes this single instance, returning instance in case of retry creation
-        if !main.instance
+        if !(main.instance)
         {
             main.instance := this
             A_ScriptName := "5ete"
