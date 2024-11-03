@@ -9,16 +9,28 @@ class input
         {
             wordTried := app.output.inputField.Value
             app.output.inputField.Value := ""
-        }
-        if (app.logic.gameIsRunning == true)
-        {
-            if (StrLen(wordTried) == 5)
+            if (app.logic.gameIsRunning == true)
             {
-                sendTry := this.try(wordTried)
-                return true
+                if (StrLen(wordTried) == 5)
+                {
+                    sendTry := this.try(wordTried)
+                    if sendTry == true
+                    {
+                        wordTried := ""
+                        return true
+                    } else
+                    {
+                        MsgBox("word: " wordTried " returned error: " sendTry)
+                        wordTried := ""
+                        return sendTry
+                    }
+                }
+            } else
+            {
+                MsgBox("Game is not running.")
+                return false
             }
         }
-        return false
     }
     try(word)
     {
@@ -27,10 +39,11 @@ class input
         actuallyPlay := app.logic.actuallyPlay(word)
         if (wordIsValid & wordIsNew & actuallyPlay == false)
         {
-            MsgBox(A_ThisFunc . " error " . wordIsValid . wordIsNew . actuallyPlay)
-            return false
+            Mistake := wordIsValid . wordIsNew . actuallyPlay
+            MsgBox(A_ThisFunc . " error " . Mistake)
+            return Mistake
         }
-        MsgBox(A_ThisFunc . " succeded " . wordIsValid . wordIsNew . actuallyPlay)
+        MsgBox(A_ThisFunc . " succeded " . wordIsValid . wordIsNew . actuallyPlay,,"t0.5")
         return true
     }
     start()

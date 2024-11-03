@@ -25,11 +25,11 @@ class output
     {
         ;REMEMBER HOW THE HELL I MADE THIS WORK ON THE OTHER, THIS IS SO ANNOYING.
         ;UPDATE: DID IT AND IT SEEMS SO WRONG ACCORDING TO DOCUMENTATION...
-        ;JUST A MEMENTO: THE TARGET MUST BE ABLE TO RECEIVE PARAMS IN ORDER FOR THIS SOLUTION TO WORK, AND I REALLY MEAN JUST ACCEPT (solved by making logic.startNewGame() become logic.startNewGame(*) AND SO ON, TESTED THE OTHER WAY AROUND AND IT RETURNS TOO MANY ARGUMENTS ERROR.)
+        ;JUST A MEMENTO: THE TARGET MUST BE ABLE TO RECEIVE PARAMS IN ORDER FOR THIS SOLUTION TO WORK, AND I REALLY MEAN JUST ACCEPT (solved by making logic.promptNewGame() become logic.promptNewGame(*) AND SO ON, TESTED THE OTHER WAY AROUND AND IT RETURNS TOO MANY ARGUMENTS ERROR.)
         ;TRY TO FIGURE OUT WHY, IF IT'S ME MISUNDERSTANDING STUFF OR JUST A CATCH FROM AHK2
         ;nested ObjBindMethods don't work either, Copilot agrees that it should be the way according to doc
         ;figuring if this is my error or error at either doc or even the language might be useful either case.
-        this.buttonNew.OnEvent("Click",logic.startNewGame.Bind())
+        this.buttonNew.OnEvent("Click",logic.promptNewGame.Bind())
         this.buttonLeave.OnEvent("Click",logic.leaveGame.Bind())
     }
 
@@ -57,8 +57,8 @@ class output
             this.control.text.opt("Center BackgroundTrans w60 h60")
             ;Sets placeholders
             this.control.picture.Value := "HBITMAP:*" images.block("red")
-            this.control.text.Value := "?"
-            this.control.text.SetFont("s40")
+            this.control.text.Value := app.logic.history.%this.line%[%this.column%]
+            this.control.text.SetFont("s40 w500")
             this.setPosition(60,60)
             this.getIntoPlace(index)
             this.setSkin("orange")

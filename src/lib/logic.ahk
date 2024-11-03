@@ -3,9 +3,9 @@
 class logic
 {
     static validWords := this.wordList()
-    static startNewGame(*)
+    static promptNewGame(*)
     {
-        app.logic.startNewGame()
+        app.logic.promptNewGame()
     }
     static leaveGame(*)
     {
@@ -38,17 +38,7 @@ class logic
 
     __New()
     {
-        this.history :=
-        {
-            1: unset,
-            2: unset,
-            3: unset,
-            4: unset,
-            5: unset,
-            6: unset,
-            7: unset,
-        }
-        this.round := 0
+        this.setEmptyRound()
     }
     actuallyPlay(word)
     {
@@ -56,7 +46,7 @@ class logic
         this.round += 1
         return true
     }
-    checkPlayHistory(word)
+    checkPlayHistory(word) ;returns true if the word has not been played, false if it's found on play history
     {
         for order,words in this.history.OwnProps()
         {
@@ -69,11 +59,35 @@ class logic
         }
         return true
     }
-    startNewGame()
+    promptNewGame()
     {
-        if !(this.round == 0)
-            MsgBox("Jogada em andamento aplicar rotina de escape daqui")
+        if this.gameIsRunning == true
+        {
+            isUserSure := MsgBox("Jogada em andamento aplicar rotina de escape daqui",,"0x8234")
+            if isUserSure == "Yes"
+                return this.setNewGame()
+            else return false
+        } else this.setNewGame()
+    }
+    setEmptyRound()
+    {
+        this.history :=
+        {
+            1: logic.word(),
+            2: logic.word(),
+            3: logic.word(),
+            4: logic.word(),
+            5: logic.word(),
+            6: logic.word(),
+            7: logic.word(),
+        }
+        this.round := 0
+    }
+    setNewGame()
+    {
+        this.setEmptyRound()
         this.round += 1
+        return true
     }
     class slot
     {
@@ -86,14 +100,24 @@ class logic
     }
     class word
     {
-        __New(theWord)
+        __New(theword := "?????")
         {
-            this.value := theWord
-            this.slots := []
-            loop 5
+            this.setWord(theword)
+        }
+        setWord(theword)
+        {
+            if !(StrLen(theword) == 5)
             {
-                this.slots.Push(logic.slot(A_Index,SubStr(this.value,A_Index,1)))
+                MsgBox(A_ThisFunc " expects a 5 letter word")
+                return false
             }
+            this.value := theword
+            this.letter := StrSplit(theword)
+            return true
+        }
+        __call()
+        {
+            return this.value 
         }
     }
     class wordList
