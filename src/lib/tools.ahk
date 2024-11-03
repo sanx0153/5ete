@@ -1,4 +1,7 @@
 #Requires AutoHotkey v2.0
+Yes := On := true
+No := Off := false
+
 
 class To
 {
