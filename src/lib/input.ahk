@@ -22,7 +22,7 @@ class input
                     {
                         MsgBox("word: " wordTried " returned error: " sendTry)
                         wordTried := ""
-                        return sendTry
+                        return false
                     }
                 }
             } else
@@ -36,12 +36,17 @@ class input
     {
         wordIsValid := logic.validateWord(word)
         wordIsNew := app.logic.checkPlayHistory(word)
-        actuallyPlay := app.logic.actuallyPlay(word)
-        if (wordIsValid & wordIsNew & actuallyPlay == false)
+        if (wordIsValid & wordIsNew == false)
+            {
+                Mistake := wordIsValid . wordIsNew
+                MsgBox(A_ThisFunc . " error " . Mistake)
+                return false
+            } else actuallyPlay := app.logic.actuallyPlay(word)
+        if (actuallyPlay == false)
         {
             Mistake := wordIsValid . wordIsNew . actuallyPlay
             MsgBox(A_ThisFunc . " error " . Mistake)
-            return Mistake
+            return false
         }
         MsgBox(A_ThisFunc . " succeded " . wordIsValid . wordIsNew . actuallyPlay,,"t0.5")
         return true

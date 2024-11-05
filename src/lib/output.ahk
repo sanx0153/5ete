@@ -11,10 +11,10 @@ class output
         this.Gui.SetFont("s22 w1000")
         this.bg := this.Gui.AddPicture("x0 y0 w600 h600 Disabled","hbitmap:*" images.app_bg)
         isIconChanged := TraySetIcon("hbitmap:*" images.block("face"))
-        this.buttonNew := this.Gui.AddButton("h60 w180 x360 y120 Center","NEW GAME")
-        this.buttonLeave := this.Gui.AddButton("h60 w180 x360 y240 Center","EXIT")
-        this.inputField := this.Gui.AddEdit("vInputField Limit5 Uppercase x60 y480 w480 h60 Center -VScroll") ; CHECKPOINT > continue from here, stopped because of my glasses
+        this.inputField := this.Gui.AddEdit("vInputField Limit5 Uppercase x60 y490 w480 h60 Center -VScroll") ; CHECKPOINT > continue from here, stopped because of my glasses
         this.inputField.SetFont("s36 w1000")
+        this.buttonNew := this.Gui.AddButton("h40 w90 x130 y+5 Center","NEW")
+        this.buttonLeave := this.Gui.AddButton("h40 w90 x+180 Center","EXIT")
         this.panel := output.panel()
     }
     createBlock(index)
@@ -42,6 +42,10 @@ class output
     {
         this.createEvents()
     }
+    updateLine(N)
+    {
+        this.panel.updateLine(N)
+    }
     class block
     {
         __New(pictureControl,textControl,index)
@@ -57,10 +61,10 @@ class output
             this.control.text.opt("Center BackgroundTrans w60 h60")
             ;Sets placeholders
             this.control.picture.Value := "HBITMAP:*" images.block("red")
-            this.control.text.Value := app.logic.history.%this.line%[%this.column%]
+            ;this.updateText()
             this.control.text.SetFont("s40 w500")
-            this.setPosition(60,60)
-            this.getIntoPlace(index)
+            this.setPosition(700,700)
+            ;this.getIntoPlace()
             this.setSkin("orange")
             this.hide()
             ;SetTimer(ObjBindMethod(this,"colorTest"),Random(1,10) * (-100))
@@ -72,26 +76,15 @@ class output
                 this.setSkin(color)
                 Sleep((Random(2,6) * (100)))
             }
-            SetTimer(ObjBindMethod(this,"colorTest"),-1)
+            SetTimer(ObjBindMethod(this,"colorTest"),-50)
         }
-        getIntoPlace(index)
+        getIntoPlace()
         {
-            this.setPosition((To.Column(index) * 60),(to.line(index) * 60))
+            this.setPosition((To.Column(this.index) * 90),(to.line(this.index) * 61))
         }
         hide()
         {
-            this.hideText()
-            this.hiddenBlock()
-        }
-        hideText()
-        {
-            this.setText("?")
-        }
-        hiddenBlock()
-        {
-            this.setSkin("orange")
-            this.isShining := true
-            this.shine()
+            this.setPosition(700,700)
         }
         isShining
         {
@@ -137,10 +130,28 @@ class output
                 SetTimer(ObjBindMethod(this,"setSkin","orange"),-(baseTime + 100))
             }
         }
+        show()
+        {
+            this.getIntoPlace()
+        }
         redraw()
         {
             this.control.picture.redraw()
             this.control.text.redraw()
+        }
+        update()
+        {
+            this.updateText()
+            this.updateColor()
+            this.show()
+        }
+        updateColor()
+        {
+            this.setSkin(app.logic.history.%this.line%.getColor(this.column))
+        }
+        updateText()
+        {
+            this.setText(app.logic.history.%this.line%.letter[this.column])
         }
     }
     class panel
@@ -151,6 +162,20 @@ class output
             loop 35
             {
                 this.blocks.Push(outputinstance.createBlock(A_Index))
+            }
+        }
+        updateLine(N)
+        {
+            loop 5
+            {
+                this.blocks[to.Index(N,A_Index)].update()
+            }
+        }
+        hide()
+        {
+            loop 35
+            {
+                this.blocks[A_Index].hide()
             }
         }
     }

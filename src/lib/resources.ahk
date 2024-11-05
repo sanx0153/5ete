@@ -14,7 +14,7 @@ class ruler
 }
 class images
 {
-    static app_bg := LoadPicture("img\bg_halloween.jpg",WINSIZETAG)
+    static app_bg := LoadPicture("img\fogobaixopassocurto" Random(1,4) ".jpg",WINSIZETAG)
     static card := LoadPicture("img\king.png")
     static block(color)
     {

@@ -42,7 +42,8 @@ class logic
     }
     actuallyPlay(word)
     {
-        this.history.%this.round% := logic.word(word)
+        this.history.%this.round%.__New(word)
+        app.output.updateLine(this.round)
         this.round += 1
         return true
     }
@@ -63,7 +64,7 @@ class logic
     {
         if this.gameIsRunning == true
         {
-            isUserSure := MsgBox("Jogada em andamento aplicar rotina de escape daqui",,"0x8234")
+            isUserSure := MsgBox("Isso vai encerrar a partida atual. Prosseguir?",,"0x8234")
             if isUserSure == "Yes"
                 return this.setNewGame()
             else return false
@@ -73,30 +74,28 @@ class logic
     {
         this.history :=
         {
-            1: logic.word(),
-            2: logic.word(),
-            3: logic.word(),
-            4: logic.word(),
-            5: logic.word(),
-            6: logic.word(),
-            7: logic.word(),
+            1: logic.PlayerWord(),
+            2: logic.PlayerWord(),
+            3: logic.PlayerWord(),
+            4: logic.PlayerWord(),
+            5: logic.PlayerWord(),
+            6: logic.PlayerWord(),
+            7: logic.PlayerWord()
         }
         this.round := 0
+
     }
     setNewGame()
     {
+        app.output.panel.hide()
         this.setEmptyRound()
+        this.sortNewAnswer()
         this.round += 1
         return true
     }
-    class slot
+    sortNewAnswer()
     {
-        __New(index,letter)
-        {
-            this.index := index
-            this.value := letter
-            this.color := unset
-        }
+        this.answer := logic.word(logic.validWords.SortOne())
     }
     class word
     {
@@ -113,11 +112,52 @@ class logic
             }
             this.value := theword
             this.letter := StrSplit(theword)
-            return true
         }
-        __call()
+        getLetter(N)
         {
-            return this.value 
+            if N < 1 || N > 5
+            {
+                MsgBox("expected an integer 1~5")
+                return false
+            }
+            return this.letter[N]
+        }
+    }
+    class PlayerWord extends logic.word
+    {
+        __New(theWord?)
+        {
+            super.__New(theWord?)
+            this.color := this.makeEmptyColorArray()
+            if IsSet(theWord)
+                this.compareAnswer()
+        }
+        compareAnswer()
+        {
+            theAnswer := app.logic.answer
+
+        }
+        makeEmptyColorArray()
+        {
+            answer := []
+            loop 5 
+            {
+                answer.Push("orange")
+            }
+            return answer
+        }
+        setColor(color,index)
+        {
+            this.color[index] := color
+        }
+        getColor(N)
+        {
+            if N < 1 || N > 5
+            {
+                MsgBox("expected an integer 1~5")
+                return false
+            }
+            return this.Color[N]
         }
     }
     class wordList
@@ -166,6 +206,11 @@ class logic
         __call()
         {
             return this.list
+        }
+        SortOne()
+        {
+            sortedWord := this.list[Random(1,this.list.Length)]
+            return sortedWord
         }
     }
 }
