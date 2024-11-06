@@ -91,6 +91,7 @@ class logic
         this.setEmptyRound()
         this.sortNewAnswer()
         this.round += 1
+        outputinstance.inputField.Focus()
         return true
     }
     sortNewAnswer()
@@ -136,6 +137,30 @@ class logic
         {
             theAnswer := app.logic.answer
 
+            notgreen := ""
+            loop theAnswer.letter.Length
+            {
+                if StrUpper(theAnswer.getLetter(A_Index)) == StrUpper(this.getLetter(A_Index))
+                {
+                    this.setColor("green",A_Index)
+                } else
+                {
+                    notgreen .= StrUpper(theAnswer.getLetter(A_Index))
+                }
+            }
+            loop theAnswer.letter.Length
+            {
+                if !(StrUpper(this.getColor(A_Index)) == StrUpper("green"))
+                {
+                    if (InStr(notgreen,this.getLetter(A_Index),0) == 0)
+                    {
+                        this.setColor("red",A_Index)
+                    } else
+                    {
+                        this.setColor("yellow",A_Index)
+                    }
+                }
+            }
         }
         makeEmptyColorArray()
         {
